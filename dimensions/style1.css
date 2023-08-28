@@ -1,0 +1,30 @@
+div{
+    display: block;
+    width: 100px;
+    height: 100px;
+    background-color: aqua;
+    border: 1px solid black;
+}
+
+
+.box
+{   position:relative;
+   top: 50px;
+   left: 50px;
+  
+}
+#box2
+{   
+    position: relative;
+    background-color: rgb(250, 232, 38);
+}
+#box4
+{
+    position: sticky;
+}
+.wrapper
+{
+    width: 100vw;
+    height: 100vw;
+    background-color: magenta;
+}
