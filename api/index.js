@@ -8,10 +8,15 @@ const jwt = require('jsonwebtoken');
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtScret = 'safsffsfsasdsd';
 const cookieParser = require('cookie-parser')
+const imageDownloader  = require('image-downloader')
 require('dotenv').config();
 
 app.use(express.json());
 app.use(cookieParser());
+
+app.use('/uploads', express.static(__dirname+'/uploads'));
+
+
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:5173',
@@ -38,23 +43,6 @@ app.post('/register', async (req, res) => {
     }
 });
  
-// app.post('/login', async (req, res) => {
-//     const { email, password } = req.body;
-//     const UserDoc = await UserModel.findOne({ email });
-//     if (UserDoc) {
-//          const passOk = bcrypt.compareSync(password, UserDoc.password);
-//          if (passOk) {
-//             jwt.sign({ email: UserDoc.email, id: UserDoc._id }, jwtScret, {}, (err, token) => {
-//                 if (err) throw err;
-//                 res.cookie('token', token).json('pass ok');
-//             });
-//          } else {
-//             res.status(422).json('pass not ok');
-//          }
-//     } else {
-//         res.json('not found');
-//     }
-// });
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -101,8 +89,22 @@ app.get('/profile',(req,res)=>{
 
 app.post('/logout',(req,res)=>{
     res.clearCookie('token','').json(true);
-}
-)
+});
+
+app.post('/upload-by-link', async (req,res)=>{
+    const {link} =req.body;
+    const newName = 'photo'+Date.now() +'.jpg';
+
+    await imageDownloader.image({
+        url:link,
+        dest: __dirname+'/uploads/' +newName, 
+    })
+
+    res.json(newName)
+
+})
+
+
     
 
 app.listen(8080);
