@@ -9,6 +9,8 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtScret = 'safsffsfsasdsd';
 const cookieParser = require('cookie-parser')
 const imageDownloader  = require('image-downloader')
+const multer  = require('multer')
+const fs = require('fs')
 require('dotenv').config();
 
 app.use(express.json());
@@ -103,7 +105,32 @@ app.post('/upload-by-link', async (req,res)=>{
     res.json(newName)
 
 })
+const photosMiddleware = multer({dest:'uploads/'});
+app.post('/upload',photosMiddleware.array('photos', 100),(req,res)=>{
+    const uploadedFiles = [];
+    for(let i=0;i<req.files.length;i++){
+        const  {path,originalname} = req.files[i];
+        const parts = originalname.split('.');
+        const ext = parts[parts.length-1];
+        const newPath = path + '.'+ext;
+        fs.renameSync(path,newPath);
+        uploadedFiles.push(newPath.replace('uploads\\',''));
+    }
+    
+    res.json(uploadedFiles);
+})
+ 
 
+// const photosMiddleware = multer({dest:'/uploads'});
+// app.post('/api/upload', photosMiddleware.array('photos', 100), async (req,res) => {
+//   const uploadedFiles = [];
+//   for (let i = 0; i < req.files.length; i++) {
+//     const {path,originalname,mimetype} = req.files[i];
+//     const url = await uploadToS3(path, originalname, mimetype);
+//     uploadedFiles.push(url);
+//   }
+//   res.json(uploadedFiles);
+// });
 
     
 
