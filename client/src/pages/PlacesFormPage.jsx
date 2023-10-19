@@ -36,14 +36,30 @@ export default function PlacesFormPage() {
             setPrice(data.price);
         })
     },[id])
-    async function addNewPlace(ev){
+    async function savePlace(ev){
         ev.preventDefault();
-       await axios.post('/places',{
+        const placeData ={
             title,address,addedPhotos,
             description,perks,extraInfo,
             checkIn,checkOut,maxGuests
-        } )
-        setRedirect(true);
+        }
+        if(id){
+            //update
+            await axios.put('/places',{
+                id, ...placeData
+                
+            } )
+            setRedirect(true);
+        }
+        else{
+            await axios.post('/places',{
+                title,address,addedPhotos,
+                description,perks,extraInfo,
+                checkIn,checkOut,maxGuests
+            } )
+            setRedirect(true);
+        }
+      
         
     }
      if(redirect){
@@ -52,7 +68,7 @@ export default function PlacesFormPage() {
     return (
         <div>
         <AccountNav/>
-            <form onSubmit={addNewPlace}>
+            <form onSubmit={savePlace}>
                 <h2 className="text-2xl mt-4 ">Title</h2>
                 <p className='mt-3 text-grat-500 text-sm'>Title for your place should be short and classy</p>
                 <input type='text'
