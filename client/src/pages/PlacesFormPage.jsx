@@ -5,6 +5,7 @@ import PhotosUploader from './PhotosUploader';
 import { useState } from 'react';   
 import AccountNav from '../AccountNav';
 import { Navigate, useParams } from 'react-router-dom';
+ 
 export default function PlacesFormPage() {
     const {id} = useParams();
     const [title,setTitle] = useState('');
@@ -21,7 +22,19 @@ export default function PlacesFormPage() {
         if(!id){
             return ;
         }
-        axios.get('/places/'+id)
+        axios.get('/places/'+id).then(response=>{
+            const {data} = response;
+            setTitle(data.title);
+            setAddress(data.address);
+            setAddedPhotos(data.photos);
+            setDescription(data.description);
+            setPerks(data.perks);
+            setExtraInfo(data.extraInfo);
+            setCheckIn(data.checkIn);
+            setCheckOut(data.checkOut);
+            setMaxGuests(data.maxGuests);
+            setPrice(data.price);
+        })
     },[id])
     async function addNewPlace(ev){
         ev.preventDefault();
