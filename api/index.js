@@ -6,12 +6,14 @@ const UserModel = require('./modals/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const bcryptSalt = bcrypt.genSaltSync(10);
-const jwtScret = 'safsffsfsasdsd';
+const jwtSecret = 'safsffsfsasdsd';
 const cookieParser = require('cookie-parser')
 const imageDownloader  = require('image-downloader')
 const multer  = require('multer')
 const fs = require('fs')
+const Place = require('./modals/Place.js')
 require('dotenv').config();
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -55,7 +57,7 @@ app.post('/login', async (req, res) => {
                 jwt.sign({ email: UserDoc.email,
                      id: UserDoc._id,
                          
-                    }, jwtScret, {}, (err, token) => {
+                    }, jwtSecret, {}, (err, token) => {
                     if (err) throw err;
                     res.cookie('token', token).json(UserDoc);
                 });
@@ -74,7 +76,7 @@ app.post('/login', async (req, res) => {
 app.get('/profile',(req,res)=>{
     const {token} = req.cookies;
     if(token){
-        jwt.verify(token,jwtScret,{},async (err,userData)=>{
+        jwt.verify(token,jwtSecret,{},async (err,userData)=>{
             if(err){
              throw err;
             }
@@ -120,18 +122,49 @@ app.post('/upload',photosMiddleware.array('photos', 100),(req,res)=>{
     res.json(uploadedFiles);
 })
  
+app.post('/places', (req, res) => {
+    const { token } = req.cookies;
+    const {
+      title,
+      address,
+      addedPhotos,
+      description,
+      perks,
+      extraInfo,
+      checkIn,
+      checkOut,
+      maxGuests,
+    } = req.body;
+  
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) {
+        throw err;
+      }
+      const placeDoc = await Place.create({
+        owner: userData.id,
+        title,
+        address,
+        photos:addedPhotos,
+        description,
+        perks,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests,
+      });
+      res.json(placeDoc);
+    });
+  });
 
-// const photosMiddleware = multer({dest:'/uploads'});
-// app.post('/api/upload', photosMiddleware.array('photos', 100), async (req,res) => {
-//   const uploadedFiles = [];
-//   for (let i = 0; i < req.files.length; i++) {
-//     const {path,originalname,mimetype} = req.files[i];
-//     const url = await uploadToS3(path, originalname, mimetype);
-//     uploadedFiles.push(url);
-//   }
-//   res.json(uploadedFiles);
-// });
-
-    
+  app.get('/places',(req,res)=>{
+    const { token } = req.cookies;
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        const {id} = userData;
+        res.json(await Place.find({owner:id}))
+    })
+  })
+  app.get('/places/:id',(req,res)=>{
+    res.json(req.params);
+  })
 
 app.listen(8080);
