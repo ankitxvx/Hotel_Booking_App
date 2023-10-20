@@ -18,6 +18,7 @@ export default function PlacesFormPage() {
     const [checkOut,setCheckOut] = useState('');
     const [maxGuests,setmaxGuests] = useState(1);
     const [redirect,setRedirect] = useState(false);
+    const [price,setPrice] = useState(100);
     useEffect(()=>{
         if(!id){
             return ;
@@ -41,7 +42,7 @@ export default function PlacesFormPage() {
         const placeData ={
             title,address,addedPhotos,
             description,perks,extraInfo,
-            checkIn,checkOut,maxGuests
+            checkIn,checkOut,maxGuests,price
         }
         if(id){
             //update
@@ -97,13 +98,12 @@ export default function PlacesFormPage() {
                 <Perks
                     selected={perks}
                     onChange={setPerks} />
-
                 <h2 className="text-2xl mt-4 " >Extra Info</h2>
                 <p className=' text-gray-500 text-sm' >House rules , etc</p>
                 <textarea value={extraInfo} onChange={ev => setExtraInfo(ev.target.value)} />
                 <h2 className="text-2xl mt-4 " >Check in & out times</h2>
                 <p className=' text-gray-500 text-sm' >add check in and out times, remember to have some time window for cleaning for room between guests</p>
-                <div className=' grid  gap-2  sm:grid-cols-3'>
+                <div className=' grid  gap-2  grid-cols-2 md:grid-cols-4'>
 
                     <div>
                         <h3 className='mt-2 -mb-2'>Check in time</h3>
@@ -125,6 +125,12 @@ export default function PlacesFormPage() {
                         <input type="number"
                             value={maxGuests}
                             onChange={ev => setmaxGuests(ev.target.value)} />
+                    </div>
+                    <div className='mt-2 -mb-2'>
+                        <h3 className=''>Price Per Night</h3>
+                        <input type="number"
+                            value={price}
+                            onChange={ev => setPrice(ev.target.value)} />
                     </div>
                 </div>
                 <div className=''>
