@@ -24,7 +24,7 @@ export default function PlacesFormPage() {
             return ;
         }
         axios.get('/places/'+id).then(response=>{
-            const {data} = response;
+            const {data} = response; 
             setTitle(data.title);
             setAddress(data.address);
             setAddedPhotos(data.photos);
