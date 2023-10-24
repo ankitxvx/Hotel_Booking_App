@@ -11,7 +11,8 @@ const cookieParser = require('cookie-parser')
 const imageDownloader  = require('image-downloader')
 const multer  = require('multer')
 const fs = require('fs')
-const Place = require('./modals/Place.js')
+const Place = require('./modals/Place.js');
+const BookingModel = require('./modals/Booking');
 require('dotenv').config();
 
 
@@ -214,4 +215,17 @@ app.post('/places', (req, res) => {
     res.json(await Place.find())
   })
 
+app.post('/bookings',(req,res)=>{
+    const {place,checkIn,checkOut,numberofGuests,name,phone,price} = req.body;
+     BookingModel.create({
+        place,checkIn,checkOut,numberofGuests,name,phone,price
+    }).then((doc)=>{
+        
+        res.json(doc);
+    }).catch((err)=> {
+        throw err;
+    });
+    
+
+})
 app.listen(8080);
