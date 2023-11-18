@@ -36,6 +36,14 @@ app.get('/test', (req, res) => {
   res.json('test ok');
 });
 
+function getUserDataFromReq(req) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      resolve(userData);
+    });
+  });
+}
 
 app.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
@@ -224,30 +232,54 @@ app.get('/places', async (req, res) => {
 
 
  
-function getUserDataFromReq(req) {
-  return new Promise((resolve, reject) => {
-    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      resolve(userData);
-    });
-  });
-}
+
+// app.post('/bookings', async (req, res) => {
+//   const userData = await getUserDataFromReq(req);
+//   const {
+//     place,checkIn,checkOut,numberOfGuests,name,phone,price,
+//   } = req.body;
+//   BookingModel.create({
+//     place,checkIn,checkOut,numberOfGuests,name,phone,price,
+//     user:userData.id,
+//   }).then((doc) => {
+//     res.json(doc);
+//   }).catch((err) => {
+//     throw err;
+//   });
+// });
+// app.get('/bookings', async (req, res) => {
+//   const userData = await getUserDataFromReq(req);
+//   res.json( await BookingModel.find({user:userData.id}).populate('place') );
+// });
 app.post('/bookings', async (req, res) => {
-  const userData = await getUserDataFromReq(req);
-  const {
-    place, checkIn, checkOut, numberOfGuests, name, phone, price,
-  } = req.body;
-  BookingModel.create({
-    place, checkIn, checkOut, numberOfGuests, name, phone, price,
-    User: userData.id,
-  }).then((doc) => {
-    res.json(doc);
-  }).catch((err) => {
-    throw err;
-  });
+  try {
+    const userData = await getUserDataFromReq(req);
+    const {
+      place, checkIn, checkOut, numberOfGuests, name, phone, price,
+    } = req.body;
+
+    const bookingDoc = await BookingModel.create({
+      place, checkIn, checkOut, numberOfGuests, name, phone, price,
+      user: userData.id,
+    });
+
+    res.json(bookingDoc);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
+
 app.get('/bookings', async (req, res) => {
-  const userData = await getUserDataFromReq(req);
-  res.json(await BookingModel.find({ user: userData.id }).populate('place'));
+  try {
+    const userData = await getUserDataFromReq(req);
+    const bookings = await BookingModel.find({ user: userData.id }).populate('place');
+    res.json(bookings);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
+
+
 app.listen(8080);
