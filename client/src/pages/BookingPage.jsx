@@ -32,7 +32,7 @@ export default function BookingPage() {
         <BookingDates booking={booking} />
         <div className='bg-primary p-6 text-white rounded-2xl'>
           <div>Total Price</div>
-          <div className='text-3xl'>${booking.price}</div>
+          <div className='text-3xl'>Rs.{booking.price}</div>
         </div>
       </div>
 

@@ -76,7 +76,7 @@ export default function BookingWidget({ place }) {
              Book this place
              
                 {numberOfNights>0 && (
-                    <span> ${numberOfNights*place.price}</span>
+                    <span> Rs.{numberOfNights*place.price}</span>
                 )}
         
             </button>

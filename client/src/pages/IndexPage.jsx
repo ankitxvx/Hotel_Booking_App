@@ -22,7 +22,7 @@ export default function IndexPage() {
                     <h3 className='text-sm  text-gray-500  '> {place.title}</h3>
                     
                     <div className="mt-1"> 
-                      <span className='font-bold'>${place.price}</span> per Night
+                      <span className='font-bold'>Rs.{place.price}</span> per Night
                     </div>
                 </Link>
                 
