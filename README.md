@@ -95,8 +95,7 @@ Hotel_Booking_App/
 ## Contributing
 Feel free to fork the project and submit a pull request if you'd like to improve it!
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+ 
 
 ---
 
